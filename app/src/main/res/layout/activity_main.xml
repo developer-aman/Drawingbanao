@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.agtechnosolution.drawingbanao.MainActivity">
+
+    <com.agtechnosolution.drawingbanao.DrawingView
+        android:id="@+id/drawView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+
+    <ImageButton
+        android:id="@+id/slide_up_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:elevation="5dp"
+        android:padding="12dp"
+        android:src="@android:drawable/arrow_up_float"
+        android:background="@drawable/btn_semicurved"
+        />
+
+    <RelativeLayout
+        android:id="@+id/sliding_menu"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:layout_alignParentBottom="true"
+        android:background="#7f345123"
+        android:visibility="invisible">
+
+        <ImageButton
+            android:id="@+id/undo_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:src="@android:drawable/ic_menu_revert"
+            style="@style/Base.Widget.AppCompat.Button.Borderless"/>
+
+        <ImageButton
+            android:id="@+id/redo_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_toLeftOf="@+id/false_view"
+            android:layout_toRightOf="@+id/undo_btn"
+            android:src="@android:drawable/ic_menu_rotate"
+            style="@style/Base.Widget.AppCompat.Button.Borderless"/>
+
+        <ImageButton
+            android:id="@+id/false_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:padding="12dp"
+            android:src="@android:drawable/arrow_up_float"
+            android:background="@drawable/btn_semicurved"
+            android:visibility="invisible"
+            android:clickable="false"/>
+
+        <ImageButton
+            android:id="@+id/edit_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_toLeftOf="@+id/save_btn"
+            android:layout_toStartOf="@+id/save_btn"
+            android:layout_toRightOf="@+id/false_view"
+            android:layout_toEndOf="@+id/false_view"
+            android:src="@android:drawable/ic_menu_edit"
+            style="@style/Base.Widget.AppCompat.Button.Borderless"
+            />
+
+        <ImageButton
+            android:id="@+id/save_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:src="@android:drawable/ic_menu_save"
+            style="@style/Base.Widget.AppCompat.Button.Borderless" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

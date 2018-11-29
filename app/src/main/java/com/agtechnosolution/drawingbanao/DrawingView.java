@@ -2,6 +2,7 @@ package com.agtechnosolution.drawingbanao;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -12,13 +13,16 @@ import android.graphics.PorterDuffXfermode;
 import android.os.Environment;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.agtechnosolution.drawingbanao.POJO.Drawing;
 import com.agtechnosolution.drawingbanao.POJO.FingerPath;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -27,7 +31,11 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+
+import io.realm.Realm;
+import io.realm.RealmList;
 
 /**
  * Created by AnujPc on 26-11-2018.
@@ -36,6 +44,7 @@ import java.util.Locale;
 public class DrawingView extends View {
 
     public static int BRUSH_SIZE=18;
+    public static int ERASER_SIZE=25;
     public static final int DEFAULT_COLOR= Color.BLACK;
     public static final int DEFAULT_BG_COLOR= Color.WHITE;
     private static final float TOUCH_TOLERANCE= 4;
@@ -51,7 +60,9 @@ public class DrawingView extends View {
     private Canvas canvas;
     private Paint bitmapPaint = new Paint(Paint.DITHER_FLAG);
     private int lastPath;
-//    private boolean editMode=false;
+    private boolean editMode;
+    Realm mRealm;
+    byte[] imgBytes;
 
     public DrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -66,19 +77,19 @@ public class DrawingView extends View {
     }
 
     public void init(DisplayMetrics metrics){
-        int height=metrics.heightPixels;
-        int width=metrics.widthPixels;
-        bitmap=Bitmap.createBitmap(width,height, Bitmap.Config.ARGB_8888);
-        canvas=new Canvas(bitmap);
-        currentColor=DEFAULT_COLOR;
-        strokeWidth=BRUSH_SIZE;
+            int height = metrics.heightPixels;
+            int width = metrics.widthPixels;
+            bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            canvas = new Canvas(bitmap);
+            currentColor = DEFAULT_COLOR;
+            strokeWidth = BRUSH_SIZE;
     }
 
-    public void clear(){
-        backgroundColor=DEFAULT_BG_COLOR;
-        pathsList.clear();
-        invalidate();
-    }
+//    public void clear(){
+//        backgroundColor=DEFAULT_BG_COLOR;
+//        pathsList.clear();
+//        invalidate();
+//    }
 
     public void undo(){
         if(!pathsList.isEmpty()) {
@@ -98,50 +109,55 @@ public class DrawingView extends View {
         }
     }
 
-//    public void editImage(Bitmap alteredBmp, Bitmap gotbitmap){
-//        editMode=true;
-////       canvas=new Canvas(bitmap);
-////        paint.setColor(DEFAULT_COLOR);
-////        paint.setStrokeWidth(BRUSH_SIZE);
-////        canvas.drawBitmap(bitmap,0,0,paint);
-//        bitmap=gotbitmap;
-//        canvasBitmapEdit=alteredBmp;
-//
-////        pathsList.clear();
-////        Canvas newCanvas=new Canvas();
-////        newCanvas.drawBitmap(bitmap,0,0,bitmapPaint);
-//    }
+    public void erase(){
+        currentColor=DEFAULT_BG_COLOR;
+        strokeWidth=ERASER_SIZE;
+    }
 
-    public String getDateTimeInString()
-    {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        Date date=new Date();
-        return dateFormat.format(date);
+    public void brushDrawing(){
+        currentColor=DEFAULT_COLOR;
+        strokeWidth=BRUSH_SIZE;
+    }
+
+    public void editImage(Bitmap gotbitmap){
+//        editMode=true;
+//        bitmapToEdit=gotbitmap;
+        pathsList.clear();
+        bitmap=gotbitmap;
     }
 
 
     public void save(Context context){
         setDrawingCacheEnabled(true);
         Bitmap saveBitmap=getDrawingCache();
+        imgBytes=new byte[0];
+        mRealm=Realm.getDefaultInstance();
         if(saveBitmap!=null) {
-            File dir=new File(Environment.getExternalStorageDirectory(),"/Drawings/");
-            if(!dir.exists()){
-                dir.mkdirs();
-            }
-            File output=new File(dir,"imgfile"+getDateTimeInString()+".jpg");
-            OutputStream os= null;
-            try {
-                os = new FileOutputStream(output);
-                saveBitmap.compress(Bitmap.CompressFormat.JPEG,80,os);
-                os.flush();
-                os.close();
-                Toast.makeText(context,"Image saved at "+output.getAbsolutePath(),Toast.LENGTH_LONG).show();
+            ByteArrayOutputStream stream=new ByteArrayOutputStream();
+            saveBitmap.compress(Bitmap.CompressFormat.WEBP,50,stream);
+
+            imgBytes=stream.toByteArray();
+            final Drawing drawingObj=new Drawing();
+            mRealm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    Number currentNum=mRealm.where(Drawing.class).maximumInt("id");
+                    Log.e("currentNum",String.valueOf(currentNum));
+                    int nextId;
+                    if(currentNum==null){
+                        nextId=1;
+                    }else{
+                        nextId=currentNum.intValue()+1;
+                    }
+                    Log.e("nextId",String.valueOf(nextId));
+                    drawingObj.setId(nextId);
+                    drawingObj.setImage(imgBytes);
+                    mRealm.copyToRealmOrUpdate(drawingObj);
+                    Log.e("imgBytes",imgBytes.toString());
+                }
+            });
+                Toast.makeText(context,"Image saved Successfully",Toast.LENGTH_LONG).show();
                 destroyDrawingCache();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }else{
             Toast.makeText(context,"Image not found",Toast.LENGTH_LONG).show();
         }
@@ -152,12 +168,12 @@ public class DrawingView extends View {
         super.onDraw(canvas);
             canvas.save();
             canvas.drawColor(backgroundColor);
+            canvas.drawBitmap(bitmap, 0, 0, bitmapPaint);
             for (FingerPath fp : pathsList) {
                 paint.setColor(fp.color);
                 paint.setStrokeWidth(fp.strokeWidth);
                 canvas.drawPath(fp.path, paint);
             }
-            canvas.drawBitmap(bitmap, 0, 0, bitmapPaint);
             canvas.restore();
     }
 
@@ -194,24 +210,22 @@ public class DrawingView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
         float y = event.getY();
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    touchStart(x, y);
+                    invalidate();
+                    break;
 
-        switch (event.getAction()){
-            case MotionEvent.ACTION_DOWN :
-                touchStart(x,y);
-                invalidate();
-                break;
+                case MotionEvent.ACTION_MOVE:
+                    touchMove(x, y);
+                    invalidate();
+                    break;
 
-            case MotionEvent.ACTION_MOVE:
-                touchMove(x,y);
-                invalidate();
-                break;
-
-            case MotionEvent.ACTION_UP:
-                touchUp();
-                invalidate();
-                break;
-        }
-
+                case MotionEvent.ACTION_UP:
+                    touchUp();
+                    invalidate();
+                    break;
+            }
         return true;
     }
 }

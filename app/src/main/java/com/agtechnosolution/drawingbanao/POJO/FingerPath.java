@@ -2,6 +2,8 @@ package com.agtechnosolution.drawingbanao.POJO;
 
 import android.graphics.Path;
 
+import io.realm.RealmObject;
+
 /**
  * Created by AnujPc on 26-11-2018.
  */
@@ -16,4 +18,5 @@ public class FingerPath {
         this.strokeWidth = strokeWidth;
         this.path = path;
     }
+
 }

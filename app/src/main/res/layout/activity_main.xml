@@ -17,62 +17,93 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:elevation="5dp"
-        android:padding="12dp"
-        android:src="@android:drawable/arrow_up_float"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:elevation="4dp"
+        android:padding="16dp"
+        android:src="@android:drawable/arrow_down_float"
         android:background="@drawable/btn_semicurved"
         />
 
     <RelativeLayout
         android:id="@+id/sliding_menu"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="?android:attr/actionBarSize"
         android:layout_alignParentBottom="true"
-        android:background="#7f345123"
-        android:visibility="invisible">
+        android:layout_toLeftOf="@+id/slide_up_btn"
+        android:layout_toStartOf="@+id/slide_up_btn"
+        android:layout_centerHorizontal="true"
+        android:background="#7f345123" >
 
         <ImageButton
             android:id="@+id/undo_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:src="@android:drawable/ic_menu_revert"
+            android:adjustViewBounds="true"
+            android:src="@drawable/ic_undo"
             style="@style/Base.Widget.AppCompat.Button.Borderless"/>
 
         <ImageButton
             android:id="@+id/redo_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_toLeftOf="@+id/false_view"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
             android:layout_toRightOf="@+id/undo_btn"
-            android:src="@android:drawable/ic_menu_rotate"
+            android:layout_toEndOf="@+id/undo_btn"
+            android:adjustViewBounds="true"
+            android:src="@drawable/ic_redo"
             style="@style/Base.Widget.AppCompat.Button.Borderless"/>
 
         <ImageButton
-            android:id="@+id/false_view"
+            android:id="@+id/brush_btn"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_centerHorizontal="true"
-            android:padding="12dp"
-            android:src="@android:drawable/arrow_up_float"
-            android:background="@drawable/btn_semicurved"
-            android:visibility="invisible"
-            android:clickable="false"/>
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_toRightOf="@+id/redo_btn"
+            android:layout_toEndOf="@+id/redo_btn"
+            android:adjustViewBounds="true"
+            android:src="@drawable/ic_brush"
+            style="@style/Base.Widget.AppCompat.Button.Borderless"/>
+
+        <ImageButton
+            android:id="@+id/erase_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_toRightOf="@+id/brush_btn"
+            android:layout_toEndOf="@+id/brush_btn"
+            android:adjustViewBounds="true"
+            android:src="@drawable/eraser"
+            style="@style/Base.Widget.AppCompat.Button.Borderless"/>
+
+        <!--<ImageButton-->
+            <!--android:id="@+id/false_view"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:padding="12dp"-->
+            <!--android:src="@android:drawable/arrow_up_float"-->
+            <!--android:background="@drawable/btn_semicurved"-->
+            <!--android:visibility="invisible"-->
+            <!--android:clickable="false"/>-->
 
         <ImageButton
             android:id="@+id/edit_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_toLeftOf="@+id/save_btn"
-            android:layout_toStartOf="@+id/save_btn"
-            android:layout_toRightOf="@+id/false_view"
-            android:layout_toEndOf="@+id/false_view"
-            android:src="@android:drawable/ic_menu_edit"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_toRightOf="@+id/erase_btn"
+            android:layout_toEndOf="@+id/erase_btn"
+            android:adjustViewBounds="true"
+            android:src="@drawable/ic_edit"
             style="@style/Base.Widget.AppCompat.Button.Borderless"
             />
 
@@ -80,10 +111,14 @@
             android:id="@+id/save_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:src="@android:drawable/ic_menu_save"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_toRightOf="@+id/edit_btn"
+            android:layout_toEndOf="@+id/edit_btn"
+            android:adjustViewBounds="true"
+            android:src="@drawable/ic_save"
             style="@style/Base.Widget.AppCompat.Button.Borderless" />
 
     </RelativeLayout>
